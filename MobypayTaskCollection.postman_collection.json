@@ -1,0 +1,266 @@
+{
+	"info": {
+		"_postman_id": "b6b40334-e741-4a0c-b08f-d7c3b4d0083e",
+		"name": "MobypayTaskCollection",
+		"description": "### **Postman Collection Overview: Weather API Testing**\n\nThis Postman collection is designed for testing a weather API. It contains a series of requests covering different functionalities and scenarios. The primary purpose of this collection is to verify the correctness and reliability of the weather API under various conditions. By executing these requests, you can ensure that the API returns accurate data, handles different input parameters correctly, and maintains expected behavior.\n\n**Request definition:**\n\nThis postman collection consists of three requests testing different scenarios:\n\n**ValidRequest -** This is a valid request with valid data and OpenWeatherMap App ID\n\n**InvalidOrMissingAppID -** This request handles how the API reacts if an invalid App ID is provided or missing\n\n**InvalidCityName** - This request handles how the API reacts if an invalid city name is provided\n\n**Environment variables:**\n\nWe are using a few environment variables which is added in the collection's environment variable.\n\n- **BASE_URL** - Base url of the open weather map API\n- **APP_ID -** Open weather map AppID\n- **INVALID_APP_ID -** An invalid AppID\n- **CITY_NAME** - Name of the city (as suggested in the task)\n- **INVALID_CITY_NAME -** An invalid city name\n    \n\n**How to test:**\n\n1. You can run each of the requests individually and check if the tests passes for each of them\n2. You can run all of them together by clicking the **Run** button on the top right of Postman (image attached)\n    \n\n<img src=\"https://content.pstmn.io/d372b0e0-bee8-4d66-8522-9d22e8f542cf/cG9zdG1hbi1ydW4ucG5n\">",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15113018"
+	},
+	"item": [
+		{
+			"name": "ValidRequest",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const cityInfo = {\r",
+							"    cityName: \"San Francisco\",\r",
+							"    cityId: 5391959,\r",
+							"    countryCode: 'US',\r",
+							"    lon: -122.4194,\r",
+							"    lat: 37.7749\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Status code to be 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verifies city information\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.name).to.eql(cityInfo.cityName);\r",
+							"    pm.expect(jsonData.id).to.eql(cityInfo.cityId);\r",
+							"    pm.expect(jsonData.sys.country).to.eql(cityInfo.countryCode);\r",
+							"    pm.expect(jsonData.coord.lon).to.eql(cityInfo.lon);\r",
+							"    pm.expect(jsonData.coord.lat).to.eql(cityInfo.lat);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}?q={{CITY_NAME}}&appid={{APP_ID}}",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "{lat}",
+							"disabled": true
+						},
+						{
+							"key": "lon",
+							"value": "{lon}",
+							"disabled": true
+						},
+						{
+							"key": "q",
+							"value": "{{CITY_NAME}}"
+						},
+						{
+							"key": "appid",
+							"value": "{{APP_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "InvalidOrMissingAppID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.get(\"BASE_URL\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code to be 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contains error message 'Invalid API key'\", function () {\r",
+							"     pm.expect(pm.response.text()).to.include(\"Invalid API key.\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}?q={{CITY_NAME}}&appid={{INVALID_APP_ID}}",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "{lat}",
+							"disabled": true
+						},
+						{
+							"key": "lon",
+							"value": "{lon}",
+							"disabled": true
+						},
+						{
+							"key": "q",
+							"value": "{{CITY_NAME}}"
+						},
+						{
+							"key": "appid",
+							"value": "{{INVALID_APP_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "InvalidCityName",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.get(\"BASE_URL\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code to be 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contains error message 'city not found'\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"city not found\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}?appid={{APP_ID}}&q={{INVALID_CITY_NAME}}",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "{lat}",
+							"disabled": true
+						},
+						{
+							"key": "lon",
+							"value": "{lon}",
+							"disabled": true
+						},
+						{
+							"key": "appid",
+							"value": "{{APP_ID}}"
+						},
+						{
+							"key": "q",
+							"value": "{{INVALID_CITY_NAME}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://api.openweathermap.org/data/2.5/weather",
+			"type": "string"
+		},
+		{
+			"key": "APP_ID",
+			"value": "7763c24a04a9aff7368b3bd2ffdb6478",
+			"type": "string"
+		},
+		{
+			"key": "INVALID_APP_ID",
+			"value": "invalid_app_id",
+			"type": "string"
+		},
+		{
+			"key": "CITY_NAME",
+			"value": "San Francisco, CA.",
+			"type": "string"
+		},
+		{
+			"key": "INVALID_CITY_NAME",
+			"value": "long_invalid_city_name",
+			"type": "string"
+		}
+	]
+}
